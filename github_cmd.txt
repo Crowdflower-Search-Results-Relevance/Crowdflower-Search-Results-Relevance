@@ -1,0 +1,7 @@
+拉取远程仓库master到origin
+git pull origin master --allow-unrelated-histories
+
+推送
+git push -u origin dev
+
+https://www.cnblogs.com/husfBK/p/9869366.html
