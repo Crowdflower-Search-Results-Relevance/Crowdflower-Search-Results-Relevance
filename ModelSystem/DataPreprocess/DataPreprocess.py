@@ -6,7 +6,7 @@ from nltk.corpus import stopwords
 
 
 
-def preprocess_text(raw_text,remove_stopwords=False,\
+def textCleaning(raw_text,remove_stopwords=False,\
     remove_number=False,remove_punctuation=False,\
         remove_HTMLtags=True):
     '''
@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     读取文件中 “riview"列第一个单元格的数据
     example = labeled_train_data["review"][0]
-    example = preprocess_text(example)
+    example = textCleaning(example)
 
     print(example)
 
