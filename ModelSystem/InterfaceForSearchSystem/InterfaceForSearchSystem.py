@@ -6,12 +6,43 @@ id productTitle productDescription
 
 '''
 
+import pandas as pd
+
+class DatabaseLoader:
+    #database 读取的文件
+    def loadDatabase(self):
+        import os.path
+
+        databaseAbsPath = "./ModelSystem/ProcessedData/Database.csv"
+        #数据库找不到就报错
+        databasePath = os.path.abspath(databaseAbsPath)
+        print(databasePath)
+        exists = os.path.exists(databasePath)
+        if(exists==False):    
+            raise Exception("未找到资料库" + databasePath)
+        
+        
+        #加载文件
+        self.database =  pd.read_csv(databasePath)
+
+
 class InterfaceForSearchSystem:
-    
+    #databaseLoader = null
+    __isInit=False
+    __databaseLoader = None
+      
+
     def init(self):
         '''
         该方式是为了让modelSystem加载资料库和模型
         '''
+        self.__isInit = True
+        #加载数据库
+        self.__databaseLoader = DatabaseLoader()
+        self.__databaseLoader.loadDatabase()
+        #print(databaseLoader.database)
+
+
         pass
     
     def getSearchResult(self,keyWord):
@@ -28,10 +59,23 @@ class InterfaceForSearchSystem:
 
         '''
 
+        if(self.__isInit == False):
+            raise Exception("未初始化")
+
         #model work
         sample1 = [0,3.8]
         sample2 = [1,3.2]
         return [sample1,sample2]
+
+    def getDatabase(self):
+        '''
+        返回数据库
+        '''
+        
+        if(self.__isInit == False):
+            raise Exception("未初始化")
+
+        return self.__databaseLoader.database.copy()
         
 
 '''
@@ -52,3 +96,10 @@ print(searchResult[0][0])
 print(searchResult[0][1])
 
 '''
+
+#以下部分为测试
+if __name__ == "__main__":
+    a = InterfaceForSearchSystem()
+    a.init()
+    print(a.getDatabase())
+    pass
