@@ -20,6 +20,11 @@ class ModelsManager():
 所有模型都将继承这个类
 '''
 class Model():
+    name=""
+    accuracy=0.0
+    F1_score=0.0
+    AUC = 0.0
+
     def init(self):
         raise Exception("子类中必须实现此函数")
     
