@@ -7,6 +7,9 @@ id productTitle productDescription
 '''
 
 import pandas as pd
+import numpy as np
+
+form InterfaceForSearchSystem import *
 
 class DatabaseLoader:
     #database 读取的文件
@@ -42,7 +45,6 @@ class InterfaceForSearchSystem:
         self.__databaseLoader.loadDatabase()
         #print(databaseLoader.database)
 
-
         pass
     
     def getSearchResult(self,keyWord):
@@ -65,13 +67,14 @@ class InterfaceForSearchSystem:
         #model work
         sample1 = [0,3.8]
         sample2 = [1,3.2]
-        return [sample1,sample2]
+
+        return 
 
     def getDatabase(self):
         '''
         返回数据库
         '''
-        
+    
         if(self.__isInit == False):
             raise Exception("未初始化")
 
