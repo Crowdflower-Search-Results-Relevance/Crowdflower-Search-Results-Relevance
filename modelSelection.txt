@@ -1,0 +1,2 @@
+Logistic 不是svd的版本 0.68
+RF svd 0.65
