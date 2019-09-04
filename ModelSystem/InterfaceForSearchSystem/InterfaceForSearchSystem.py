@@ -9,7 +9,7 @@ id productTitle productDescription
 import pandas as pd
 import numpy as np
 
-form InterfaceForSearchSystem import *
+#form InterfaceForSearchSystem import *
 
 class DatabaseLoader:
     #database 读取的文件
@@ -28,6 +28,9 @@ class DatabaseLoader:
         #加载文件
         self.database =  pd.read_csv(databasePath)
 
+class SubResult:
+    weights=  [0.2,0.2,0.6]
+    grades = [3.5,4.0,3.6]
 
 class InterfaceForSearchSystem:
     #databaseLoader = null
@@ -50,14 +53,14 @@ class InterfaceForSearchSystem:
     def getSearchResult(self,keyWord):
         '''
         keyWord是用户搜索的关键词，类型为string
-        返回排序好的搜索结果，其结构为
+        返回排序好的搜索结果（前50个结果）：ids,relevances
 
-        sample = [id,relevance,otherInformation] ,id为该产品在资料库中的id
-        返回值= 多个sample构成的list 
+        ids[i]为排名第i的产品在资料库中的id
+        relevances[i]为第i个产品的相关度评分 
 
-        id:int32
-        relevance:float32
-        otherInformation:待定
+
+        ids: list ,dtype =int32
+        relevance:list , dtype = float32
 
         '''
 
@@ -65,10 +68,17 @@ class InterfaceForSearchSystem:
             raise Exception("未初始化")
 
         #model work
-        sample1 = [0,3.8]
-        sample2 = [1,3.2]
+        ids = [ i for i in range (50)]
+        relevances = []
+        results = []
+        for  i in range(50):
+            relevances.append((50-i)/50 *4)
+            results.append(SubResult())
+        
+        #print(ids)
+        #print(relevances)
 
-        return 
+        return ids,relevances,results
 
     def getDatabase(self):
         '''
@@ -79,7 +89,25 @@ class InterfaceForSearchSystem:
             raise Exception("未初始化")
 
         return self.__databaseLoader.database.copy()
+    
+    def getCandidateWords(self):
+        if(self.__isInit == False):
+            raise Exception("未初始化")
+
+        words = list((self.__databaseLoader.database)["query"])
+
+        candidateWords = dict()
+
+        for word in words:
+            
+            if word in candidateWords.keys():
+                candidateWords[word] += 1
+            else:
+                candidateWords[word] = 1
         
+        return candidateWords
+            
+
 
 '''
 前端的使用方法
@@ -90,13 +118,21 @@ interface = InterfaceForSearchSystem()
 初始化
 interface.init()
 
-searchResult - interface.getSearchResult("Zhangluoxi")
+ids,relevances = interface.getSearchResult("Zhangluoxi")
 
 查看相关度排名第一的产品在资料库中的id
-print(searchResult[0][0])
+print(ids[0])
 
 查看相关度排名第一的产品的相关度评分
-print(searchResult[0][1])
+print(relevances[0])
+
+获取相关度排名第一的产品的title
+index = ids[0]
+database=getDatabase()
+print( database['product_title'][index] )
+
+获取产品的 description
+将上文的 product_title 替换为 product_description
 
 '''
 
@@ -104,5 +140,16 @@ print(searchResult[0][1])
 if __name__ == "__main__":
     a = InterfaceForSearchSystem()
     a.init()
-    print(a.getDatabase())
+
+    ids,relevances,results = a.getSearchResult('as')
+
+    #输出排名第一的产品title
+    index = ids[0]
+    database=a.getDatabase()
+    
+
+    candidateWords = a.getCandidateWords()
+    for key in candidateWords.keys():
+        print( key , ", ",candidateWords[key])
+
     pass
