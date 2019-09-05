@@ -161,7 +161,7 @@ def ridge():
     y_pred = ridge.predict(x_test)
 
     y_pred = list(y_pred)
-    print(y_pred[:10])
+    #print(y_pred[:10])
     y_p = rounding_spec(y_pred)
 
     print("Ridge Spec Rounding Acc = ",calcAcc(y_p,y_test))
@@ -177,4 +177,4 @@ RF()
 
 svm_c()
 
-ridge()
+#ridge()

@@ -9,20 +9,25 @@
 
 import wx
 import wx.xrc
+from Main_1 import TTry2
+
 import sys
 
 ###########################################################################
 ## Class Page_1
 ###########################################################################
 global Acc_A,Acc_B,Acc_C,Rel_A,Rel_B,Rel_C
-Acc_A = 5.0
-Acc_B = 5.0
-Acc_C = 5.0
-Rel_A = 100
-Rel_B = 100
-Rel_C = 100
 
-bitmap_path = "./SearchSystem/paddle_signal.png"
+Acc_A = 1.0
+Acc_B = 2.0
+Acc_C = 3.0
+Rel_A = 4.0
+Rel_B = 500
+Rel_C = 600
+
+
+
+bitmap_path = "paddle_signal.png"
 
 class Page_1 ( wx.Frame ):
 
@@ -34,6 +39,7 @@ class Page_1 ( wx.Frame ):
 		self.setupStatusBar()
 
 		bSizer2 = wx.BoxSizer( wx.VERTICAL )
+
 
 		self.m_bitmap2 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( bitmap_path, wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer2.Add( self.m_bitmap2, 0, wx.ALL, 10 )
@@ -102,7 +108,7 @@ class Page_2 ( wx.Frame ):
 		self.Modle_B_Name = wx.StaticText( self, wx.ID_ANY, u"SVR Model", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.Modle_B_Name.Wrap( -1 )
 		gSizer11.Add( self.Modle_B_Name, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
-		self.Modle_C_Name = wx.StaticText( self, wx.ID_ANY, u"Random Foreast Modle", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.Modle_C_Name = wx.StaticText( self, wx.ID_ANY, u"Random Forest Model", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.Modle_C_Name.Wrap( -1 )
 		gSizer11.Add( self.Modle_C_Name, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
 

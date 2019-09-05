@@ -11,12 +11,12 @@ featuresBasePath = "./ModelSystem/Features"
 
 
 combineFeatures = [
-        #("tfidf","tfidf_query"),
-        #("tfidf","tfidf_title"),
-        #("tfidf","tfidf_description"),
-        ("tfidf","tfidf_query_svd"),
-        ("tfidf","tfidf_title_svd"),
-        ("tfidf","tfidf_description_svd"),
+        ("tfidf","tfidf_query"),
+        ("tfidf","tfidf_title"),
+        ("tfidf","tfidf_description"),
+        #("tfidf","tfidf_query_svd"),
+        #("tfidf","tfidf_title_svd"),
+        #("tfidf","tfidf_description_svd"),
         ("tfidf","tfidf_cos_query_title"),
         ("tfidf","tfidf_cos_query_description"),
         ("tfidf","tfidf_cos_title_description"),
@@ -49,17 +49,17 @@ combineFeatures = [
     ]
 
 
-def combineTFIDTFeatures():
+def combineAllFeatures():
 
 
     catagories = ["train","test"]
 
-    #isToDense = False
-    isToDense = True
+    isToDense = False
+    #isToDense = True
 
     for cata in catagories:
 
-        if(cata=="train"):continue
+        #if(cata=="train"):continue
 
         X = None
         #遍历combineFeatures中所有元素，依次找到特征对应的文件进行拼接
@@ -84,6 +84,7 @@ def combineTFIDTFeatures():
         if(isToDense):
             X = X.toarray()
 
+        print(len(X.nonzero()[0]))
         print("X.shape = ",X.shape)
         with open( "./ModelSystem/Features/X_%s.pickle" % cata,"wb") as file:
             pickle.dump(X,file)
@@ -92,7 +93,7 @@ def combineTFIDTFeatures():
     print("All Done")
 
 def main():
-    combineTFIDTFeatures()
+    combineAllFeatures()
     pass
 
 if __name__ == "__main__":

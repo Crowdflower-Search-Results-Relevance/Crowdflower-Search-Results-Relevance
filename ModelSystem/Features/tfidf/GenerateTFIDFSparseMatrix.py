@@ -149,8 +149,8 @@ def generateTFIDFSparseMatrix():
         use_idf=1,
         smooth_idf=1,
         sublinear_tf=1,
-        stop_words = 'english'
-        #stop_words = None
+        #stop_words = 'english'
+        stop_words = None
         ) 
 
     '''
