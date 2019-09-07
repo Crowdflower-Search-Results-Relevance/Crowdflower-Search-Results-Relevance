@@ -110,3 +110,13 @@ venv.bak/
 *.csv
 *.pickle
 ModelSystem/RawData/synonyms.csv
+ModelSystem/Features/w2v/GoogleNews-vectors-negative300.bin
+ModelSystem/Features/w2v/GoogleNews-vectors-negative300.part1.rar
+ModelSystem/Features/w2v/GoogleNews-vectors-negative300.part2.rar
+ModelSystem/Features/w2v/GoogleNews-vectors-negative300.part3.rar
+ModelSystem/Features/group4/ssfeas4train.txt
+ModelSystem/Features/group4/ssfeas4test.txt
+ModelSystem/Features/group2/train_ext_counts_top10.txt
+ModelSystem/Features/group2/test_ext_counts_top10.txt
+ModelSystem/Features/group5/X_additional_tr.txt
+ModelSystem/Features/group5/X_additional_te.txt
