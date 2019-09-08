@@ -261,24 +261,40 @@ def generateTFIDF_svd():
     featuresBasePath = "./ModelSystem/Features"
     #遍历combineFeatures中所有元素，依次找到特征对应的文件进行处理
     catagories = ["train","test"]
-    for cata in catagories:
-        for i in range(len(combineFeatures)):
-            
-            print("Concatenate %d-th feature..." % i)
+    trainSz =0
+    testSz =0
+
+    for i in range(len(combineFeatures)):
+        print("Concatenate %d-th feature..." % i)
+        wholeFeatureMatrix = None
+
+        for cata in catagories:  
             featureCatagory,featureName = combineFeatures[i]
             path = "%s/%s/%s_%s.pickle" % (featuresBasePath,featureCatagory,featureName,cata)
             with open( path,"rb") as file:
                 featureMatrix = pickle.load(file)
-                #全部转换为csr矩阵再拼接
-                if(type(featureMatrix) != sp.csr.csr_matrix):
-                    featureMatrix = sp.csr.csr_matrix(featureMatrix)
-
-                featureMatrix  =  svd.fit_transform(featureMatrix)
+                #全部转换为csr矩阵
+            if(type(featureMatrix) != sp.csr.csr_matrix):
                 featureMatrix = sp.csr.csr_matrix(featureMatrix)
-                print(featureMatrix.shape)
-                newPath = "%s/%s/%s_svd_%s.pickle" % (featuresBasePath,featureCatagory,featureName,cata)
-                with open( newPath,"wb") as newFile:
-                    pickle.dump(featureMatrix,newFile)
+
+            if(cata == "train"):
+                wholeFeatureMatrix = featureMatrix
+                trainSz = featureMatrix.shape[0]
+            else:
+                testSz = featureMatrix.shape[0]
+                wholeFeatureMatrix = sp.vstack((wholeFeatureMatrix,featureMatrix))
+                print("whole matrix shape = ",wholeFeatureMatrix.shape)
+
+        wholeFeatureMatrix  =  svd.fit_transform(wholeFeatureMatrix)
+        print("SVDed whole matrix shape = ",wholeFeatureMatrix.shape)
+
+        newPath = "%s/%s/%s_svd_train.pickle" % (featuresBasePath,featureCatagory,featureName)
+        with open( newPath,"wb") as newFile:
+            pickle.dump(wholeFeatureMatrix[:trainSz],newFile)
+
+        newPath = "%s/%s/%s_svd_test.pickle" % (featuresBasePath,featureCatagory,featureName)
+        with open( newPath,"wb") as newFile:
+            pickle.dump(wholeFeatureMatrix[trainSz:],newFile)
 
 
 def main():
@@ -286,7 +302,7 @@ def main():
     print(1)
     generateCosFeatures()
     print(2)
-    #tmpGenerateY_train()
+
     generateTFIDF_svd()
     pass
 

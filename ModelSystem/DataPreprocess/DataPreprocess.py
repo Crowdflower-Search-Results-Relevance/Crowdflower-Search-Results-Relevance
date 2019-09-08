@@ -5,6 +5,9 @@ import csv
 import nltk
 from nltk.corpus import stopwords
 import nltk.stem
+from nltk.stem import wordnet
+
+lemmer = wordnet.WordNetLemmatizer()
 
 replace_dict = {
     "nutri system": "nutrisystem",
@@ -112,7 +115,9 @@ def cleanText(l):
     l = replacer.replace(l)
     #l = " ".join(l)
     #print(type(l))
-    cleaned_text = [s.stem(ws) for ws in l]
+    cleaned_text = [lemmer.lemmatize(ws) for ws in l]
+    #return " ".join([lemmer.lemmatize(z) for z in tokens])
+    #cleaned_text = [s.stem(ws) for ws in l]
     cleaned_text = " ".join(cleaned_text)
     if(cleaned_text=="nan"):cleaned_text=""
     
@@ -146,8 +151,8 @@ def cleanTest():
     dfTest.to_csv("./ModelSystem/ProcessedData/test.csv")
 
 
-#cleanTrain()
-#cleanTest()
+cleanTrain()
+cleanTest()
 
 
 
@@ -190,7 +195,7 @@ def cleanText_sim(l):
     if(cleaned_text=="nan"):cleaned_text=""
     
     return cleaned_text
-
+'''
 
 leng2=dfTest.shape[0]
 for name in names:
@@ -202,5 +207,5 @@ for name in names:
         dfTest[name][j] = cleanText_sim(h) 
 
 dfTest.to_csv("./SearchSystem/data/database.csv")
-
+'''
 

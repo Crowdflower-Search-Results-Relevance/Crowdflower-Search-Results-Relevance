@@ -39,10 +39,24 @@ def main():
                 bigram = ngram.getBigram(wordList, "_")
                 trigram = ngram.getTrigram(wordList, "_")
 
+                for i in range(len(unigram)):
+                    if(unigram[i]=="nan"): unigram[i] = ""
+
+                for i in range(len(bigram)):
+                    if(bigram[i]=="nan"): bigram[i] = ""
+
+                for i in range(len(trigram)):
+                    if(trigram[i]=="nan"): trigram[i] = ""
+
                 output_unigram.append(unigram)
                 output_bigram.append(bigram)
                 output_trigram.append(trigram)
             
+                #print(unigram)
+                #print(bigram)
+                #print(trigram)
+                #raise Exception("sdf")
+
             path = "./ModelSystem/Features/ngram/%s_unigram_%s.pickle" % (col,cata)    
             with open(path, "wb") as f:
                 pickle.dump(output_unigram,f)

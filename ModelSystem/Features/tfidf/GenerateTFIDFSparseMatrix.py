@@ -96,8 +96,8 @@ def generateCorpus():
         if(i % 1000==0):
             print(i)
 
-    print(type(corpus))
-    print(type(corpus[0]))
+    #print(type(corpus))
+    #print(type(corpus[0]))
 
     '''
     file = open("./ModelSystem/Features/tfidf/"+ "query_train.pickle","wb")
@@ -149,8 +149,8 @@ def generateTFIDFSparseMatrix():
         use_idf=1,
         smooth_idf=1,
         sublinear_tf=1,
+        #stop_words = 'english'
         stop_words = 'english'
-        #stop_words = None
         ) 
 
     '''

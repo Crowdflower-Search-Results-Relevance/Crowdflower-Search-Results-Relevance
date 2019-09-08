@@ -8,6 +8,9 @@ class Interface():
     __inited = False
 
     #若更改路径，请将原路径注释再添加新的路径，而不是将原路径直接删去
+    #相对路径无效
+    #__resultPath = "data/result.pickle"
+    #__databasePath  = "data/database.csv"
     __resultPath = "./SearchSystem/data/result.pickle"
     __databasePath  = "./SearchSystem/data/database.csv"
 

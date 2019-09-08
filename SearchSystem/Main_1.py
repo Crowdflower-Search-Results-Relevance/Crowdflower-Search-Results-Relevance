@@ -2,9 +2,11 @@
 import wx
 import wx.xrc
 import sys
-from UI.noname import MyFrame01
 from UI.Page import Page_1
 from UI.Page import Page_2
+from wx.lib.wordwrap import wordwrap
+import wx.lib.agw.ultimatelistctrl as ULC
+
 app = wx.App()
 #frame = MyFrame1(None)
 frame = Page_1(None)
@@ -56,11 +58,13 @@ frame.List_Description.InsertColumn(4,'Relevance')
 frame.List_Keywords.InsertColumn(0,'Query')
 #frame.List_Keywords.InsertColumn(1,'Count')
 
+frame.List_Keywords.SetColumnWidth(0, 200)
+
 frame.List_Description.SetColumnWidth(0, 30)
-frame.List_Description.SetColumnWidth(1, 120)
-frame.List_Description.SetColumnWidth(2, 240)
-frame.List_Description.SetColumnWidth(3, 240)
-frame.List_Description.SetColumnWidth(4, 240)
+frame.List_Description.SetColumnWidth(1, 100)
+frame.List_Description.SetColumnWidth(2, 170)
+frame.List_Description.SetColumnWidth(3, 270)
+frame.List_Description.SetColumnWidth(4, 130)
 frame.Show()
 
 for key in packages_Keywords:
@@ -76,29 +80,48 @@ for data in packages_Descriptions:
     frame.List_Description.SetItem(index, 3, data[2])
 '''
 
+#对List_Description中的item进行调整
 def changeValue_package(packages_Descriptions_T):
-    print("2111111111133333331")
+    '''
+    frame.List_Description.DeleteAllItems()
     for data in packages_Descriptions_T:
-        index = frame.List_Description.InsertItem(frame.List_Description.GetItemCount(),str(data))
+        #print(frame.List_Description.GetItemCount(),str(data))
+
+        #for item in self.items[::-1]:
+		#	item = wordwrap(item, colWidth - self.colWidthPad, wx.ClientDC(self))
+		#	self.List_Description.InsertStringItem(0, item)
+
+        #item = wordwrap(data[0], 200 - frame.colWidthPad, wx.ClientDC(frame))
+        index = frame.List_Description.InsertStringItem( frame.List_Description.GetItemCount() , "" )
+
+        frame.List_Description.SetStringItem(index, 0,str(index+1))
+
+        #填充  [query,title,description,avg_relevance]
+        for i in range(len(data)):
+            frame.List_Description.SetStringItem(index, i+1,data[i])
+    '''
+    frame.List_Description.DeleteAllItems()
+    for data in packages_Descriptions_T:
+        #print(frame.List_Description.GetItemCount(),str(data))
+
+        index = frame.List_Description.InsertItem( frame.List_Description.GetItemCount() , str(data) )
 
         frame.List_Description.SetItem(index, 0,str(index+1))
 
         #填充  [query,title,description,avg_relevance]
         for i in range(len(data)):
-            frame.List_Description.SetItem(index, i+1,data[i])
-        '''
-        frame.List_Description.SetItem(index, 1,data[0])
-        frame.List_Description.SetItem(index, 2,data[1])
-        frame.List_Description.SetItem(index, 3, data[2])
-        '''
 
+            frame.List_Description.SetItem(index, i+1,data[i])
+
+    
+
+  
 
 # Virtual event handlers, overide them in your derived class
 
 def TTry(event):
-    print("1111111111111111")
    # frame.Key_Words_Details.
-    frame.List_Description.DeleteAllItems()
+
 ##############传入搜索结果情况####################################
     #packages_Descriptions_T = [('a', 'b', 'c'), ('d', 'new york', '1949'),
     #                           ('angelina jolie', 'ji', '1975')]
@@ -126,12 +149,20 @@ def TTry(event):
 
 
 def TTry2(event):
-    frame2 = Page_2(None)
 
     #################################
     #三个模型的名字为 SVM , RandomForest , XGBboost Linear
     # 正确率先不显示
     #下面演示获取点击的item所对应的三个模型的评分
+
+
+    Page_1.Rel_A = 133333333333333
+    Page_1.Rel_B = 222222222
+    Page_1.Rel_C = 311111111111
+
+    print("asdsda")
+
+    print("aaaaaaaasdsda")
 
     index = frame.List_Description.GetFocusedItem()
     print("clicked %d-th List_Description item" %index)
@@ -140,8 +171,13 @@ def TTry2(event):
     svm_relevace,randomforest_relevace,xgb_relevance = frame.searchResults[index][4],\
         frame.searchResults[index][5],frame.searchResults[index][6]
 
+    Page_1.Rel_B = svm_relevace
+    Page_1.Rel_C = randomforest_relevace
+    Page_1.Rel_A = xgb_relevance
+
+    frame2 = Page_2(None)
     # [query,title,description,avg_relevance,svm_pred,rf_pred,xgb_pred]
-    print("22222222222222222")
+
     frame2.Show()
 
 #########################下标栏的信息切换###########################################
