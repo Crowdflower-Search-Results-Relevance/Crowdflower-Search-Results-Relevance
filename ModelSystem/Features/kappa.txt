@@ -1,0 +1,12 @@
+kappa 67.8555
+维数 68
+
+所有 group
+cos qt,qd
+所有dis
+rounding cdf
+
+kappa 70.744  369维
+svd
+所有cos,dis,group
+cdf rounding

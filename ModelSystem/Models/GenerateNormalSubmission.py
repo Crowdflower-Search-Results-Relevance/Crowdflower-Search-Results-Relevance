@@ -6,6 +6,7 @@ from  kappa  import quadratic_weighted_kappa
 import pickle
 import numpy as np
 from sklearn.preprocessing import minmax_scale
+import pandas as pd
 
 x_train_path = "./ModelSystem/Features/X_train.pickle"
 
@@ -18,22 +19,13 @@ with open(y_train_path,"rb") as f:
     y_train = pickle.load(f)
 
 
+x_test_path = "./ModelSystem/Features/X_test.pickle"
+with open(x_test_path,"rb") as f:
+    x_test = pickle.load(f)
+
 hist = np.bincount(y_train)
 cdf = np.cumsum(hist) / float(sum(hist))
-
-'''
-from sklearn.model_selection import train_test_split
-x_train,x_test,y_train,y_test = train_test_split(\
-    x_train,y_train,test_size = 0.3,random_state = 0)
-'''
-sz = 7000
-
-x_test = x_train[sz:]
-y_test = y_train[sz:]
-x_train = x_train[:sz]
-y_train = y_train[:sz]
-
-
+print("cdf =",cdf)
 
 #获取样本权重
 def getWeights():
@@ -45,7 +37,7 @@ def getWeights():
         weights.append(1/(float(v) + 1.0))
     weights = np.array(weights,dtype=float)
     #print(weights)
-    return weights[:sz]
+    return weights
 
 def rounding_cdf(y_pred):
     y_pred = np.array(y_pred)
@@ -59,33 +51,14 @@ def rounding_cdf(y_pred):
         s = t
 
     y_pred = y_pred.astype(np.int32)
+
+    cnt = np.zeros([4])
+    for i in y_pred:
+        cnt[i] += 1
+
+    print("cnt=",cnt)
     return y_pred
 
-def rounding_zo(y_pred):
-    y_pred = minmax_scale(y_pred)
-    sz = len(y_pred)
-
-    for i in range(sz):
-        if(y_pred[i]<0.33):y_pred[i] = 0
-        elif (y_pred[i]<0.6):y_pred[i] = 1
-        elif (y_pred[i]<0.77):y_pred[i] = 2
-        else :y_pred[i] = 3
-    y_pred = y_pred.astype(np.int32)
-    return y_pred
-
-
-def calcAcc(A,B):
-    sz = len(A)
-    acc=0
-
-    m = np.zeros([4,4],dtype=int)
-    for i in range(sz):
-        if(A[i]==B[i]):acc+=1
-        m[A[i]][B[i]]+=1
-    
-    print(m)
-
-    return acc/sz
 
 
 def svr():
@@ -95,11 +68,19 @@ def svr():
     y_pred = clf.predict(x_test)
 
     y_pred = list(y_pred)
-    y_p = rounding_cdf(y_pred)
+    y_pred = rounding_cdf(y_pred)
 
-    qwk=quadratic_weighted_kappa(y_test,y_p)
-    print("kappa",qwk)
-    print("Rounding cdf 验证集 Acc = ",calcAcc(y_p,y_test))
+    submission = pd.read_csv("./ModelSystem/RawData/sampleSubmission.csv")
+  
+    print(len(y_pred))
+    print(len(submission["prediction"]))
+
+    for i in range(len(y_pred)):
+        y_pred[i] = y_pred[i] +1
+        submission["prediction"][i] =  y_pred[i]
+    
+    submission.to_csv("./ModelSystem/Models/NormalSubmission.csv",index=False)
+    
 
 
 svr()

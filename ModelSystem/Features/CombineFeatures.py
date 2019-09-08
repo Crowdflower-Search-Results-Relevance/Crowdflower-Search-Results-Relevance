@@ -9,15 +9,20 @@ featuresBasePath = "./ModelSystem/Features"
 #columnNames = ["query","title","description"]
 #featureCatagories = ["tfidf"]
 
-
+'''
+with open("./ModelSystem/Features/X_train_new_group_svr.pickle","rb") as f:
+    tmp = pickle.load(f)
+    print(tmp.shape)
+exit()
+'''
 combineFeatures = [
         #tfidf
         #("tfidf","tfidf_query"),
         #("tfidf","tfidf_title"),
         #("tfidf","tfidf_description"),
-        #("tfidf","tfidf_query_svd"),
-        #("tfidf","tfidf_title_svd"),
-        #("tfidf","tfidf_description_svd"),
+        ("tfidf","tfidf_query_svd"),
+        ("tfidf","tfidf_title_svd"),
+        ("tfidf","tfidf_description_svd"),
         ("tfidf","tfidf_cos_query_title"),
         ("tfidf","tfidf_cos_query_description"),
         ("tfidf","tfidf_cos_title_description"),
@@ -59,7 +64,7 @@ combineFeatures = [
         ("distance","jaccard_trigram_query_title"),
         ("distance","jaccard_trigram_title_description"),
 
-
+        #下面共48个
         #group1 #9
         ("group1","ratio_word_query_in_title"),
         ("group1","count_word_query_in_title"),
@@ -96,7 +101,7 @@ def combineAllFeatures():
 
     for cata in catagories:
 
-        if(cata=="test"):continue
+        #if(cata=="test"):continue
 
         X = None
         #遍历combineFeatures中所有元素，依次找到特征对应的文件进行拼接
@@ -124,7 +129,8 @@ def combineAllFeatures():
         print(len(X.nonzero()[0]))
         print("X.shape = ",X.shape)
 
-        X = minmax_scale(X, axis=0)#归一化
+        if(isToDense):
+            X = minmax_scale(X, axis=0)#归一化
 
         with open( "./ModelSystem/Features/X_%s.pickle" % cata,"wb") as file:
             pickle.dump(X,file)
