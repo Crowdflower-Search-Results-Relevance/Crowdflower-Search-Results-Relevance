@@ -25,18 +25,25 @@ def construct_extended_query(queries,queries_test,titles,titles_test,top_words=1
     query_ext_test = np.zeros(len(test)).astype(np.object)
 
     for q in np.unique(queries):
+        #print (q)
         q_mask = queries == q
+        #print(q_mask[:100])
+        #exit()
         q_test = queries_test == q
         
+        #抽取某一query的所有产品
         titles_q = titles[q_mask]
         y_q = y[q_mask]
         
         good_mask = y_q > 3
+        #抽取产品中相关度为4的产品title
         titles_good = titles_q[good_mask]
         ext_q = str(q)
         for item in titles_good:
             ext_q += ' '+str(item)
+        #替换停用词
         ext_q = pattern.sub('', ext_q)
+        #选出title中出现频数最高的10个词语
         c = [word for word, it in Counter(ext_q.split()).most_common(top_words)]
         c = ' '.join(c)
         data.append([q,ext_q,c])
