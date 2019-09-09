@@ -328,7 +328,7 @@ class TestVirtualList(wx.ListCtrl,listmix.ListCtrlAutoWidthMixin):
             )
         self.InsertColumn(0, "Title")
         self.InsertColumn(1, "Description")
-        self.InsertColumn(2, "Acc")
+        self.InsertColumn(2, "Kappa")
         self.SetColumnWidth(0, 175)
         self.SetColumnWidth(1, 175)
         self.SetColumnWidth(2, 175)

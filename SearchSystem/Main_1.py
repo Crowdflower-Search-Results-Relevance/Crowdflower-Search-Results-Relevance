@@ -134,6 +134,7 @@ def TTry(event):
         query = frame.List_Keywords.GetItemText(index, 0)
 
 
+
     ###查询搜索结果,result结果请勿更改
     frame.searchResults = interface.getSearchResult(query)
 
@@ -142,7 +143,9 @@ def TTry(event):
     
     for result in frame.searchResults:
         #取每一项的前4项 [query,title,description,avg_relevance]
+
         sub_description = result[:4]
+
         packages_Descriptions_T.append(sub_description)
     
     changeValue_package(packages_Descriptions_T)
@@ -156,24 +159,28 @@ def TTry2(event):
     #下面演示获取点击的item所对应的三个模型的评分
 
 
-    Page_1.Rel_A = 133333333333333
-    Page_1.Rel_B = 222222222
-    Page_1.Rel_C = 311111111111
-
     print("asdsda")
 
-    print("aaaaaaaasdsda")
 
     index = frame.List_Description.GetFocusedItem()
     print("clicked %d-th List_Description item" %index)
     if index <0: return
     
+    '''
     svm_relevace,randomforest_relevace,xgb_relevance = frame.searchResults[index][4],\
         frame.searchResults[index][5],frame.searchResults[index][6]
 
     Page_1.Rel_B = svm_relevace
     Page_1.Rel_C = randomforest_relevace
     Page_1.Rel_A = xgb_relevance
+    '''
+    Page_1.txt_query = str(frame.searchResults[index][0])
+    Page_1.txt_title = str(frame.searchResults[index][1])
+    Page_1.txt_description = str(frame.searchResults[index][2])
+    Page_1.Rel_A=frame.searchResults[index][4]
+    Page_1.Rel_B=frame.searchResults[index][5]
+    Page_1.Rel_C=frame.searchResults[index][6]
+    Page_1.final_relevance = str(frame.searchResults[index][3])
 
     frame2 = Page_2(None)
     # [query,title,description,avg_relevance,svm_pred,rf_pred,xgb_pred]
