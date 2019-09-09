@@ -329,7 +329,7 @@ class Page_2 ( wx.Frame ):
 		self.Product_Title = wx.StaticText(self, wx.ID_ANY, u"Product Title：", wx.DefaultPosition, wx.DefaultSize, 0)
 		self.Product_Title.Wrap(-1)
 
-		gSizer3.Add(self.Product_Title, 0, wx.LEFT, 50)#-60
+		gSizer3.Add(self.Product_Title, 0, wx.LEFT, 60)#-60
 
 		self.Product_Title_Panel = wx.TextCtrl(self, wx.ID_ANY, self.Product_Title_String, wx.DefaultPosition,
 											   wx.Size(480, 60), style=wx.TE_READONLY | wx.TE_MULTILINE)#150,30
