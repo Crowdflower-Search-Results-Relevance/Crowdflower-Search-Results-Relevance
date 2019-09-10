@@ -61,18 +61,6 @@ def rounding_cdf(y_pred):
     y_pred = y_pred.astype(np.int32)
     return y_pred
 
-def rounding_zo(y_pred):
-    y_pred = minmax_scale(y_pred)
-    sz = len(y_pred)
-
-    for i in range(sz):
-        if(y_pred[i]<0.33):y_pred[i] = 0
-        elif (y_pred[i]<0.6):y_pred[i] = 1
-        elif (y_pred[i]<0.77):y_pred[i] = 2
-        else :y_pred[i] = 3
-    y_pred = y_pred.astype(np.int32)
-    return y_pred
-
 
 def calcAcc(A,B):
     sz = len(A)
@@ -98,8 +86,7 @@ def svr():
     y_p = rounding_cdf(y_pred)
 
     qwk=quadratic_weighted_kappa(y_test,y_p)
-    print("kappa",qwk)
-    print("Rounding cdf 验证集 Acc = ",calcAcc(y_p,y_test))
+    print("SVR Kappa:",qwk)
 
 
 svr()

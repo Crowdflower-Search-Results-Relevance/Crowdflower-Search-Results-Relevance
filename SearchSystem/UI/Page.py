@@ -31,9 +31,10 @@ timg_path = "./SearchSystem/timg.jpg.png"
 print("123456780981233124")
 
 class Page_1 ( wx.Frame ):
-	Acc_A = 0.7105
-	Acc_B = 0.6833
-	Acc_C = 0.6843
+	Acc_A = 0.68964
+	Acc_B = 0.65192
+	Acc_C = 0.64851
+
 	Rel_A = 4
 	Rel_B = 4
 	Rel_C = 4
