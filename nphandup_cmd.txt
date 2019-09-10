@@ -6,13 +6,15 @@ nohup python -u ./ModelSystem/Features/cotfidf/GenerateFeature.py > 1.out 2>&1 &
 cat 1.out
 
 python ./ModelSystem/Models/LR.py
+python ./ModelSystem/Models/GenerateNormalSubmission.py
 
 python  ./ModelSystem/Features/group4/GenerateFeature.py
 
 nohup python -u ./ModelSystem/Features/group1/GenerateFeature.py > 1.out 2>&1 &
 
-
 python  ./ModelSystem/DataPreprocess/DataPreprocess.py
 
 python ./ModelSystem/Features/group1/GenerateFeature.py 
 python ./ModelSystem/Features/group2/GenerateFeature.py 
+
+python ./ModelSystem/Features/group5/GenerateFeature.py 

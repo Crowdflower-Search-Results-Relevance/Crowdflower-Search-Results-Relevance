@@ -56,31 +56,116 @@ def rounding_cdf(y_pred):
     for i in y_pred:
         cnt[i] += 1
 
-    print("cnt=",cnt)
+    print("rounding cdf cnt=",cnt)
     return y_pred
 
 
 
-def svr():
+def svr(sample_weight):
 
     clf = SVR(C=4.0,gamma=0.2,cache_size=2048,kernel='rbf')
-    clf.fit(x_train,y_train,sample_weight=getWeights())#,sample_weight=weights)
+    clf.fit(x_train,y_train,sample_weight=sample_weight)#,sample_weight=weights)
     y_pred = clf.predict(x_test)
 
     y_pred = list(y_pred)
     y_pred = rounding_cdf(y_pred)
+    return y_pred
+
+
+
+def lir(sample_weight):
+    from sklearn.linear_model import LinearRegression
+    
+    model = LinearRegression(n_jobs = -1)
+    model.fit(x_train, y_train,sample_weight=sample_weight)
+    y_pred = model.predict(x_test)
+    y_pred = list(y_pred)
+
+    y_p = rounding_cdf(y_pred)
+    return y_p
+
+    #submission = pd.read_csv("./ModelSystem/RawData/sampleSubmission.csv")
+  
+    #print(len(y_pred))
+    #print(len(submission["prediction"]))
+
+    #for i in range(len(y_pred)):
+    #    y_pred[i] = y_pred[i] +1
+        #submission["prediction"][i] =  y_pred[i]
+    
+    #submission.to_csv("./ModelSystem/Models/NormalSubmission.csv",index=False)
+
+def ridge(sample_weight, alpha=1.0):
+    from sklearn.linear_model import Ridge
+    ridge = Ridge(alpha=alpha, normalize=False)
+    ridge.fit(x_train, y_train,sample_weight=sample_weight)#, sample_weight=weight_train[index_base]
+    y_pred = ridge.predict(x_test)
+
+    y_pred = list(y_pred)
+    y_p = rounding_cdf(y_pred)
+    return y_p
+
+
+import numpy as np
+def softmax(x):
+    exp_x = np.exp(x)
+    softmax_x = exp_x / np.sum(exp_x)
+    return softmax_x
+
+if __name__ == "__main__":
+
+    #获取样本权重
+    sample_weight = getWeights()
+    svr_pred = svr(sample_weight)    
+    linear_pred = lir(sample_weight)
+    ridge_pred = ridge(sample_weight)
 
     submission = pd.read_csv("./ModelSystem/RawData/sampleSubmission.csv")
-  
-    print(len(y_pred))
-    print(len(submission["prediction"]))
+    print("Sample Count = ",len(svr_pred))
 
-    for i in range(len(y_pred)):
-        y_pred[i] = y_pred[i] +1
-        submission["prediction"][i] =  y_pred[i]
+    #生成svr的结果
+    for i in range(len(svr_pred)):
+        submission["prediction"][i] =  svr_pred[i] + 1
     
-    submission.to_csv("./ModelSystem/Models/NormalSubmission.csv",index=False)
+    submission.to_csv("./ModelSystem/Models/NormalSubmission_svr.csv",index=False)
+
+    #lr
+    for i in range(len(linear_pred)):
+        submission["prediction"][i] =  linear_pred[i] + 1
     
+    submission.to_csv("./ModelSystem/Models/NormalSubmission_lir.csv",index=False)
+
+    #ridge
+    for i in range(len(ridge_pred)):
+        submission["prediction"][i] =  ridge_pred[i] + 1
+    
+    submission.to_csv("./ModelSystem/Models/NormalSubmission_ridge.csv",index=False)
+
+    x = [0.68964, 0.65192, 0.64851]
+    x = softmax(x)
+    
+    svr_pred = svr_pred.astype(np.float)
+    linear_pred = linear_pred.astype(np.float)
+    ridge_pred = ridge_pred.astype(np.float)
+
+    final_relevance =x[0]*svr_pred+x[1]*linear_pred+x[2]*ridge_pred
+    final_relevance_cp = final_relevance.copy()
+    final_relevance = rounding_cdf(final_relevance)
+
+    #生成提交文件
 
 
-svr()
+    for i in range(len(final_relevance)):
+        submission["prediction"][i] =  final_relevance[i]+1
+    
+    submission.to_csv("./ModelSystem/Models/NormalSubmission_final.csv",index=False)
+
+    #生成结果文件供search system使用
+    svr_pred = svr_pred.astype(np.int32)
+    linear_pred = linear_pred.astype(np.int32)
+    ridge_pred = ridge_pred.astype(np.int32)
+
+    save = open('./SearchSystem/data/result.pickle', 'wb')
+    data=[svr_pred,linear_pred,ridge_pred,final_relevance_cp]
+    pickle.dump(data, save)
+    save.close()

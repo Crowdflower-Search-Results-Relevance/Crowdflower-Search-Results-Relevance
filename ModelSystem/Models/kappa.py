@@ -85,3 +85,7 @@ def quadratic_weighted_kappa(y, y_pred):
             denominator += d * expected_count / num_scored_items
 
     return (1.0 - numerator / denominator)
+
+if __name__ == "__main__":
+    print(quadratic_weighted_kappa([1,2],[1,4]))
+    print(quadratic_weighted_kappa([1,3],[1,4]))

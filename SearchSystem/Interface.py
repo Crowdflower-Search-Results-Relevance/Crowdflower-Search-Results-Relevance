@@ -22,7 +22,7 @@ class Interface():
         self.__inited = True
 
         #加载原始文件
-        self.__database = pd.read_csv(self.__databasePath)
+        self.__database = pd.read_csv(self.__databasePath).fillna("")
         
         with open(self.__resultPath,"rb") as f:
             self.__result = pickle.load(f)
@@ -43,12 +43,16 @@ class Interface():
         title = list((self.__database)["product_title"])
         description = list((self.__database)["product_description"])
 
-        svm_pred = self.__result[0]
-        rf_pred = self.__result[1]
-        xgb_pred = self.__result[2]
+        #[relevance1,relevance2,relevance3,FinalRelevance]
+        SVR_pred = self.__result[0]
+        LR_pred = self.__result[1]
+        Ridge_pred = self.__result[2]
         avg_pred = self.__result[3]
+
+        #print(len(self.__result))
         
-        sz = svm_pred.shape[0]
+        sz = SVR_pred.shape[0]
+        #print(sz)
 
         for i in range(sz):
             title[i] = str(title[i])
@@ -57,16 +61,17 @@ class Interface():
             description[i] = str(description[i])
             if(description[i]=="nan"):description[i] =""
 
-            svm_pred[i] += 1.0
-            rf_pred[i]+=1.0
-            xgb_pred[i] +=1.0
+            SVR_pred[i] += 1.0
+            LR_pred[i]+=1.0
+            Ridge_pred[i] +=1.0
             avg_pred[i] += 1.0
 
 
         self.__database = []
 
         for i in range(sz):
-            info = [query[i],title[i],description[i],float(avg_pred[i]),float(svm_pred[i]),float(rf_pred[i]),float(xgb_pred[i])]
+            info = [query[i],title[i],description[i],float(avg_pred[i]),\
+                float(SVR_pred[i]),float(LR_pred[i]),float(Ridge_pred[i])]
             #print(type(info[3]))
             self.__database.append(info)
         
@@ -93,7 +98,7 @@ class Interface():
             raise Exception("不存在的候选词")
 
         #######遍历数据库
-        #  [query[i],title[i],description[i],avg_pred[i],svm_pred[i],rf_pred[i],xgb_pred[i]]
+        #  [query[i],title[i],description[i],avg_pred[i], SVR_pred[i],LR_pred[i],Ridge_pred[i]]
         results = []
         for info in self.__database:
             if(query == info[0] ):
@@ -104,9 +109,11 @@ class Interface():
         results = sorted(results, key=lambda x:x[3],reverse=True )
 
         for i in range(len(results)):
-            for j in range(3,len(results[i])):
+            results[i][3] = "%.4lf" % float(results[i][3])
+            results[i][3] = str(results[i][3])
+            for j in range(4,len(results[i])):
                 #if(type(results[i][j])== str):print(i,",,,",j)
-                results[i][j] = "%.2lf" % float(results[i][j])
+                results[i][j] = "%d" % int(results[i][j])
                 results[i][j] = str(results[i][j])
 
         return results

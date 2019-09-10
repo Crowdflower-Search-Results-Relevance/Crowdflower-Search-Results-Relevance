@@ -4,6 +4,7 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import minmax_scale
 from  kappa  import quadratic_weighted_kappa
+from sklearn.svm import SVR
 
 
 x_train_path = "./ModelSystem/Features/X_train.pickle"
@@ -25,7 +26,32 @@ with open(y_train_path,"rb") as f:
 
 hist = np.bincount(y_train)
 cdf = np.cumsum(hist) / float(sum(hist))
-#print("cdf=",cdf)
+
+'''
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test = train_test_split(\
+    x_train,y_train,test_size = 0.3,random_state = 0)
+'''
+sz = 7000
+
+x_test = x_train[sz:]
+y_test = y_train[sz:]
+x_train = x_train[:sz]
+y_train = y_train[:sz]
+
+
+
+#获取样本权重
+def getWeights():
+    import pandas as pd
+    dfTrain =pd.read_csv('./ModelSystem/RawData/train.csv')
+    var = list(dfTrain["relevance_variance"])
+    weights = []
+    for v in var:
+        weights.append(1/(float(v) + 1.0))
+    weights = np.array(weights,dtype=float)
+    #print(weights)
+    return weights[:sz]
 
 def rounding_cdf(y_pred):
     y_pred = np.array(y_pred)
@@ -40,18 +66,6 @@ def rounding_cdf(y_pred):
 
     y_pred = y_pred.astype(np.int32)
     return y_pred
-
-
-
-from sklearn.model_selection import train_test_split
-#data_x是一个n*m的矩阵，m是特征数，n是样本数
-#data_t是一个长度为n的list
-x_train,x_test,y_train,y_test = train_test_split(\
-    x_train,y_train,test_size = 0.3,random_state = 0)
-
-y_test = list(y_test)
-
-
 
 ##############
 #逻辑回归
@@ -110,27 +124,14 @@ def LinearR():
     from sklearn.linear_model import LinearRegression
     
     model = LinearRegression(n_jobs = -1)
-    model.fit(x_train, y_train)
+    model.fit(x_train, y_train,sample_weight=getWeights())
     y_pred = model.predict(x_test)
     y_pred = list(y_pred)
 
     y_p = rounding_cdf(y_pred)
     qwk=quadratic_weighted_kappa(y_test,y_p)
-    print("kappa",qwk)
-    print("Linear Rounding cdf 验证集 Acc = ",calcAcc(y_p,y_test))
-    #################################################
-    y_pred = model.predict(x_train)
-    y_pred = list(y_pred)
+    print("LinearRegresion Kappa:",qwk)
 
-    y_p = rounding_cdf(y_pred)
-    print("Linear Rounding cdf 训练集 Acc = ",calcAcc(y_p,y_train))
-
-
-    return y_p
-    #y_p = rounding_common(y_pred)
-    #print("Linear Common Acc = ",calcAcc(y_p,y_test))
-
-#print(y_pred[0:20],end = " ")
 
 def RF():
     from sklearn.ensemble import RandomForestClassifier
@@ -182,16 +183,15 @@ def svm_c():
 def ridge(alpha=1.0):
     from sklearn.linear_model import Ridge#, Lasso, LassoLars, ElasticNet
     ridge = Ridge(alpha=alpha, normalize=False)
-    ridge.fit(x_train, y_train)#, sample_weight=weight_train[index_base]
+    ridge.fit(x_train, y_train,sample_weight=getWeights())#, sample_weight=weight_train[index_base]
     y_pred = ridge.predict(x_test)
 
     y_pred = list(y_pred)
     #print(y_pred[:10])
     y_p = rounding_cdf(y_pred)
     qwk=quadratic_weighted_kappa(y_test,y_p)
-    print("kappa",qwk)
-    print("Ridge rounding cdf Acc = ",calcAcc(y_p,y_test))
-    return y_p
+    print("RidgeRegression Kappa:",qwk)
+
 
 def Lasso(alpha=1.0):
     from sklearn.linear_model import Lasso#, Lasso, LassoLars, ElasticNet
@@ -206,23 +206,23 @@ def Lasso(alpha=1.0):
     print("kappa",qwk)
     print("LASSO rounding cdf Acc = ",calcAcc(y_p,y_test))
 
+def svr():
+
+    clf = SVR(C=4.0,gamma=0.2,cache_size=2048,kernel='rbf')
+    clf.fit(x_train,y_train,sample_weight=getWeights())#,sample_weight=weights)
+    y_pred = clf.predict(x_test)
+
+    y_pred = list(y_pred)
+    y_p = rounding_cdf(y_pred)
+
+    qwk=quadratic_weighted_kappa(y_test,y_p)
+    print("SVR Kappa:",qwk)
+
 #LinearR()
 
-LogR()
+#LogR()
+svr()
 LinearR()
 ridge()
-Lasso()
-RF()
-
-'''
-y_pred = np.array([y_1,y_2,y_3])
-y_pred = np.mean(y_pred ,axis =0 )
-y_pred = list(y_pred)
-y_p = rounding_cdf(y_pred)
-print(len(y_pred))
-print(len(y_test))
-print("avg Acc = ",calcAcc(y_p,y_test))
-'''
+#Lasso()
 #RF()
-#svm_c()
-#ridge()
